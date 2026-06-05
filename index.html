@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tom's Daily Routine – Listening Exercise</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --primary: #4361ee;
+    --accent: #f72585;
+    --green: #06d6a0;
+    --yellow: #ffbe0b;
+    --red: #ef233c;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e0e7ff;
+    --shadow: 0 4px 24px rgba(67,97,238,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  header .badge {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 5vw, 40px);
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1.15;
+  }
+
+  header p {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+
+  /* ─── EXERCISE 1 ─── */
+  .ex-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+  }
+
+  .ex-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .ex-card .desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  /* Word bank */
+  #word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: #f0f4ff;
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    min-height: 54px;
+  }
+
+  .word-chip {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 99px;
+    cursor: grab;
+    user-select: none;
+    transition: transform .15s, box-shadow .15s, opacity .15s;
+    box-shadow: 0 2px 8px rgba(67,97,238,.25);
+  }
+
+  .word-chip:active { cursor: grabbing; transform: scale(1.08); }
+  .word-chip.used { opacity: .35; pointer-events: none; }
+  .word-chip.dragging { opacity: .5; }
+
+  /* Sentences */
+  .sentences { display: flex; flex-direction: column; gap: 12px; }
+
+  .sentence-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.8;
+  }
+
+  .sentence-row .num {
+    width: 26px;
+    height: 26px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .drop-zone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 32px;
+    padding: 0 10px;
+    border: 2.5px dashed var(--primary);
+    border-radius: 8px;
+    background: #f0f4ff;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    position: relative;
+  }
+
+  .drop-zone.over {
+    background: #dbe4ff;
+    border-color: var(--accent);
+  }
+
+  .drop-zone.filled {
+    background: var(--primary);
+    color: #fff;
+    border-style: solid;
+  }
+
+  .drop-zone .remove-btn {
+    display: none;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 11px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .drop-zone.filled .remove-btn { display: flex; }
+
+  /* ─── EXERCISE 2 ─── */
+  .order-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .order-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .order-row span.activity {
+    flex: 1;
+  }
+
+  .order-input {
+    width: 54px;
+    height: 36px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    background: #f8faff;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .order-input:focus { border-color: var(--primary); }
+
+  /* ─── SUBMIT & SCORE ─── */
+  .submit-wrap {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .btn-submit {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 44px;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(67,97,238,.35);
+    transition: transform .15s, box-shadow .15s;
+    letter-spacing: .5px;
+  }
+
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(67,97,238,.4); }
+  .btn-submit:active { transform: scale(.97); }
+
+  /* Score */
+  #score-panel {
+    display: none;
+    margin-top: 28px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    animation: fadeUp .4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #score-panel .score-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 62px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--primary);
+  }
+
+  #score-panel .score-label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+    margin-bottom: 18px;
+    font-weight: 600;
+  }
+
+  .score-bars {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .score-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .score-bar-item .pill {
+    padding: 5px 14px;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .pill.correct { background: var(--green); }
+  .pill.wrong { background: var(--red); }
+
+  .feedback-msg {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* Answer feedback colors */
+  .drop-zone.correct-ans { background: var(--green); border-color: var(--green); color: #fff; }
+  .drop-zone.wrong-ans { background: var(--red); border-color: var(--red); color: #fff; }
+  .order-input.correct-ans { border-color: var(--green); color: var(--green); }
+  .order-input.wrong-ans { border-color: var(--red); color: var(--red); background: #fff0f3; }
+
+  .btn-retry {
+    margin-top: 16px;
+    background: transparent;
+    border: 2.5px solid var(--primary);
+    color: var(--primary);
+    border-radius: 12px;
+    padding: 10px 28px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+
+  .btn-retry:hover { background: var(--primary); color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">🎧 Listening Exercise – Beginner</div>
+  <h1>Tom's Daily Routine</h1>
+  <p>A conversation between two friends about Tom's daily routine and his dog.</p>
+</header>
+
+<!-- EXERCISE 1 -->
+<div class="ex-card">
+  <div class="section-label">Exercise 1 of 2</div>
+  <h2>Fill in the Blanks</h2>
+  <p class="desc">Drag the correct verb from the word bank into each blank.</p>
+
+  <div id="word-bank">
+    <div class="word-chip" draggable="true" data-word="wake up">wake up</div>
+    <div class="word-chip" draggable="true" data-word="take">take</div>
+    <div class="word-chip" draggable="true" data-word="go">go</div>
+    <div class="word-chip" draggable="true" data-word="finish">finish</div>
+    <div class="word-chip" draggable="true" data-word="be">be</div>
+    <div class="word-chip" draggable="true" data-word="read">read</div>
+    <div class="word-chip" draggable="true" data-word="start">start</div>
+    <div class="word-chip" draggable="true" data-word="cook">cook</div>
+  </div>
+
+  <div class="sentences">
+    <div class="sentence-row">
+      <div class="num">1</div>
+      <span>Tom usually</span>
+      <div class="drop-zone" data-answer="wake up" data-id="d1">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>at 7 o'clock.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">2</div>
+      <span>After breakfast, he</span>
+      <div class="drop-zone" data-answer="go" data-id="d2">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>to work.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">3</div>
+      <span>His classes</span>
+      <div class="drop-zone" data-answer="start" data-id="d3">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>at 9:00.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">4</div>
+      <span>He</span>
+      <div class="drop-zone" data-answer="finish" data-id="d4">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>work at 4:00 in the afternoon.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">5</div>
+      <span>After work, he sometimes</span>
+      <div class="drop-zone" data-answer="cook" data-id="d5">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>dinner.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">6</div>
+      <span>In the evening, he usually</span>
+      <div class="drop-zone" data-answer="read" data-id="d6">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>a book or watches TV.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">7</div>
+      <span>Tom</span>
+      <div class="drop-zone" data-answer="take" data-id="d7">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>his dog for a walk.</span>
+    </div>
+    <div class="sentence-row">
+      <div class="num">8</div>
+      <span>The dog</span>
+      <div class="drop-zone" data-answer="be" data-id="d8">
+        drop here
+        <span class="remove-btn" onclick="removeAnswer(this)">✕</span>
+      </div>
+      <span>four years old.</span>
+    </div>
+  </div>
+</div>
+
+<!-- EXERCISE 2 -->
+<div class="ex-card">
+  <div class="section-label">Exercise 2 of 2</div>
+  <h2>Put in the Correct Order</h2>
+  <p class="desc">Write the number (1–7) to show the correct order of Tom's activities.</p>
+
+  <div class="order-list">
+    <div class="order-row">
+      <span class="activity">Tom cooks dinner.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="5" placeholder="?">
+    </div>
+    <div class="order-row">
+      <span class="activity">Tom finishes work.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="4" placeholder="?">
+    </div>
+    <div class="order-row">
+      <span class="activity">Tom goes home.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="5" placeholder="?">
+    </div>
+    <div class="order-row">
+      <span class="activity">Tom goes to work.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="2" placeholder="?">
+    </div>
+    <div class="order-row">
+      <span class="activity">Tom reads a book.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="6" placeholder="?">
+    </div>
+    <div class="order-row">
+      <span class="activity">Tom starts teaching.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="3" placeholder="?">
+    </div>
+    <div class="order-row">
+      <span class="activity">Tom wakes up.</span>
+      <input class="order-input" type="number" min="1" max="7" data-answer="1" placeholder="?">
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT -->
+<div class="submit-wrap">
+  <button class="btn-submit" onclick="checkAnswers()">✓ Check Answers</button>
+</div>
+
+<!-- SCORE PANEL -->
+<div id="score-panel">
+  <div class="score-big" id="score-pct">0%</div>
+  <div class="score-label" id="score-detail"></div>
+  <div class="score-bars">
+    <div class="score-bar-item">
+      <div class="pill correct" id="correct-count">0</div>
+      Correct
+    </div>
+    <div class="score-bar-item">
+      <div class="pill wrong" id="wrong-count">0</div>
+      Wrong
+    </div>
+  </div>
+  <div class="feedback-msg" id="feedback-msg"></div>
+  <br>
+  <button class="btn-retry" onclick="resetAll()">↺ Try Again</button>
+</div>
+
+<script>
+  // ── DRAG & DROP ──
+  let draggedWord = null;
+
+  document.querySelectorAll('.word-chip').forEach(chip => {
+    chip.addEventListener('dragstart', e => {
+      draggedWord = chip.dataset.word;
+      chip.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', draggedWord);
+    });
+    chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+  });
+
+  document.querySelectorAll('.drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('over');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      if (!draggedWord) return;
+      // Return old word if zone already filled
+      if (zone.classList.contains('filled')) {
+        returnWord(zone.dataset.current);
+      }
+      placeWord(zone, draggedWord);
+      markChipUsed(draggedWord, true);
+      draggedWord = null;
+    });
+    // Click to place if dragging isn't available (mobile)
+    zone.addEventListener('click', () => {
+      if (zone.classList.contains('filled')) return;
+    });
+  });
+
+  function placeWord(zone, word) {
+    zone.dataset.current = word;
+    zone.classList.add('filled');
+    // Clear text, keep remove button
+    zone.childNodes[0].textContent = word + ' ';
+  }
+
+  function returnWord(word) {
+    if (!word) return;
+    document.querySelectorAll('.word-chip').forEach(c => {
+      if (c.dataset.word === word) c.classList.remove('used');
+    });
+  }
+
+  function markChipUsed(word, used) {
+    document.querySelectorAll('.word-chip').forEach(c => {
+      if (c.dataset.word === word) {
+        if (used) c.classList.add('used');
+        else c.classList.remove('used');
+      }
+    });
+  }
+
+  function removeAnswer(btn) {
+    const zone = btn.parentElement;
+    const word = zone.dataset.current;
+    zone.childNodes[0].textContent = 'drop here ';
+    zone.classList.remove('filled', 'correct-ans', 'wrong-ans');
+    zone.dataset.current = '';
+    returnWord(word);
+  }
+
+  // ── CHECK ANSWERS ──
+  function checkAnswers() {
+    let correct = 0;
+    let total = 0;
+
+    // Exercise 1
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+      total++;
+      const given = (zone.dataset.current || '').trim();
+      const answer = zone.dataset.answer.trim();
+      zone.classList.remove('correct-ans', 'wrong-ans');
+      if (given === answer) {
+        zone.classList.add('correct-ans');
+        correct++;
+      } else {
+        zone.classList.add('wrong-ans');
+      }
+    });
+
+    // Exercise 2
+    document.querySelectorAll('.order-input').forEach(input => {
+      total++;
+      const given = input.value.trim();
+      const answer = input.dataset.answer.trim();
+      input.classList.remove('correct-ans', 'wrong-ans');
+      if (given === answer) {
+        input.classList.add('correct-ans');
+        correct++;
+      } else {
+        input.classList.add('wrong-ans');
+      }
+    });
+
+    const pct = Math.round((correct / total) * 100);
+    document.getElementById('score-pct').textContent = pct + '%';
+    document.getElementById('score-detail').textContent = `${correct} correct out of ${total} questions`;
+    document.getElementById('correct-count').textContent = correct;
+    document.getElementById('wrong-count').textContent = total - correct;
+
+    let msg = '';
+    if (pct === 100) msg = '🏆 Perfect score! Excellent!';
+    else if (pct >= 80) msg = '🎉 Great job! Almost perfect!';
+    else if (pct >= 60) msg = '👍 Good effort! Keep practicing!';
+    else if (pct >= 40) msg = '📖 Keep listening and try again!';
+    else msg = '🎧 Listen again carefully and retry!';
+
+    document.getElementById('feedback-msg').textContent = msg;
+
+    const panel = document.getElementById('score-panel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ── RESET ──
+  function resetAll() {
+    // Reset drop zones
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+      returnWord(zone.dataset.current);
+      zone.dataset.current = '';
+      zone.childNodes[0].textContent = 'drop here ';
+      zone.classList.remove('filled', 'correct-ans', 'wrong-ans', 'over');
+    });
+    // Reset order inputs
+    document.querySelectorAll('.order-input').forEach(input => {
+      input.value = '';
+      input.classList.remove('correct-ans', 'wrong-ans');
+    });
+    // Reset word chips
+    document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('used'));
+    document.getElementById('score-panel').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
